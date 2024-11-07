@@ -1,40 +1,26 @@
-const http = require("http");
-const fs = require("fs");
+const express = require("express");
+const path = require("path");
 
-const host = "localhost";
-const port = 8000;
+const app = express();
+// error handler
+app.use((req, res, next) => {
+  res.status(404).sendFile(path.join(__dirname, "/404.html"));
+});
 
-const requestListener = function (req, res) {
-  res.setHeader("Content-Type", "text/html");
+app.get("/", function (req, res) {
+  res.sendFile(path.join(__dirname, "/index.html"));
+});
 
-  switch (req.url) {
-    case "/":
-      const indexHtml = "index.html";
-      res.statusCode = 200;
-      res.setHeader("Content-Type", "text/html");
-      fs.createReadStream(indexHtml).pipe(res);
-      break;
-    case "/about":
-      const aboutHtml = "about.html";
-      res.statusCode = 200;
-      res.setHeader("Content-Type", "text/html");
-      fs.createReadStream(aboutHtml).pipe(res);
-      break;
-    case "/contact":
-      const contactHtml = "contact-me.html";
-      res.statusCode = 200;
-      res.setHeader("Content-Type", "text/html");
-      fs.createReadStream(contactHtml).pipe(res);
-      break;
-    default:
-      const notFoundHtml = "404.html";
-      res.statusCode = 200;
-      res.setHeader("Content-Type", "text/html");
-      fs.createReadStream(notFoundHtml).pipe(res);
-  }
-};
+app.get("/about", function (req, res) {
+  res.sendFile(path.join(__dirname, "/about.html"));
+});
 
-const server = http.createServer(requestListener);
-server.listen(port, host, () => {
-  console.log(`🧨 Server is running on http://${host}:${port}`);
+app.get("/contact", function (req, res) {
+  res.sendFile(path.join(__dirname, "/contact-me.html"));
+});
+
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log(`Server is listening on port ${PORT}!`);
 });
